@@ -19,24 +19,44 @@ app.use(bodyParser.json());
 const AUTH_KEY = process.env.AUTHORIZATION_TOKEN;
 if (!AUTH_KEY) {
     logger.warn("No authorization token found in .env file. This means that anyone can access your API. It's recommended to use an authorization token.");
-} else {
-    app.use((req, res, next) => {
-        const token = req.headers.authorization;
-        if (!token) {
-            return res.status(401).json({
-                error: "Unauthorized"
-            });
-        }
+} 
 
-        if (token !== AUTH_KEY) {
-            return res.status(403).json({
-                error: "Forbidden"
-            });
-        }
-
+const whitelistedRoutes = [
+    "/"
+];
+app.use((req, res, next) => {
+    const id = Math.random().toString(36).substring(7);
+    logger.info("Request with ID '%s' received [URL: %s, Method: %s, From: %s]", id, req.url, req.method, req.ip);
+    if (whitelistedRoutes.includes(req.url)) {
+        logger.info("Request with ID '%s' was whitelisted", id);
         next();
-    });
-}
+        return;
+    }
+
+    if (!AUTH_KEY) {
+        logger.warn("No authorization token found in .env file. This means that anyone can access your API. It's recommended to use an authorization token.");
+        next();
+        return;
+    }
+
+    const token = req.headers.authorization;
+    if (!token) {
+        logger.info("Request with ID '%s' was blocked [Code: 401, Message: Missing authorization token]", id);
+        return res.status(401).json({
+            error: "Unauthorized"
+        });
+    }
+
+    if (token !== AUTH_KEY) {
+        logger.info("Request with ID '%s' was blocked [Code: 403, Message: Invalid authorization token]", id);
+        return res.status(403).json({
+            error: "Forbidden"
+        });
+    }
+
+    logger.info("Request with ID '%s' was authorized", id);
+    next();
+});
 
 function getRoutes() {
     const fullRoutes = [];

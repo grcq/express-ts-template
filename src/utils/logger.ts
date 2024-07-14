@@ -21,35 +21,35 @@ function writeToLogFile(message: string, type: LogType = "info") {
 }
 
 export default {
-    info: (message: string) => {
+    info: (message: any, ...params: any) => {
         const date = new Date().toLocaleString("en-GB").replace(", ", " ");
-        console.log(`\x1b[36m[${date} INFO] \x1b[0m ${message}`);
+        console.log(`\x1b[36m[${date} INFO] \x1b[0m ${message}`, ...params);
 
         writeToLogFile(message, "info");
     },
-    error: (message: string) => {
+    error: (message: any, ...params: any) => {
         const date = new Date().toLocaleString("en-GB").replace(", ", " ");
-        console.log('\x1b[31m[%s ERROR] \x1b[0m %s', date, message);
+        console.log(`\x1b[31m[${date} ERROR] \x1b[0m ${message}`, ...params);
 
         writeToLogFile(message, "error");
     },
-    success: (message: string) => {
+    success: (message: any, ...params: any) => {
         const date = new Date().toLocaleString("en-GB").replace(", ", " ");
-        console.log('\x1b[32m[%s SUCCESS]\x1b[0m %s', date, message);
+        console.log(`\x1b[32m[${date} SUCCESS] \x1b[0m ${message}`, ...params);
 
         writeToLogFile(message, "success");
     },
-    warn: (message: string) => {
+    warn: (message: any, ...params: any) => {
         const date = new Date().toLocaleString("en-GB").replace(", ", " ");
-        console.log('\x1b[33m[%s WARNING]\x1b[0m %s', date, message);
+        console.log(`\x1b[33m[${date} WARN] \x1b[0m ${message}`, ...params);
 
         writeToLogFile(message, "warn");
     },
-    debug: (message: string) => {
+    debug: (message: any, ...params: any) => {
         if (!process.env.DEBUG_MODE) return;
-        
+
         const date = new Date().toLocaleString("en-GB").replace(", ", " ");
-        console.log('\x1b[34m[%s DEBUG] \x1b[0m %s', date, message);
+        console.log(`\x1b[35m[${date} DEBUG] \x1b[0m ${message}`, ...params);
 
         writeToLogFile(message, "debug");
     }
