@@ -46,7 +46,7 @@ export default {
         writeToLogFile(message, "warn");
     },
     debug: (message: any, ...params: any) => {
-        if (!process.env.DEBUG_MODE) return;
+        if (!process.env.DEBUG_MODE || process.env.DEBUG_MODE == "false") return;
 
         const date = new Date().toLocaleString("en-GB").replace(", ", " ");
         console.log(`\x1b[35m[${date} DEBUG] \x1b[0m ${message}`, ...params);
